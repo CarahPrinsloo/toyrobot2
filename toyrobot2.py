@@ -1,3 +1,5 @@
+direction = "forward"
+
 def name_robot():
     """Name robot"""
     
@@ -82,49 +84,52 @@ def get_move(command):
     return move.lower().strip()
 
 
-def set_direction_face(direction_face, command):
+def set_direction_face(command):
     """Sets direction robot faces after move"""
+    global direction
     index = 0
     coordinates = ['forward', 'back', 'right', 'left']
             
     if command == 'right':
-        if direction_face == 'forward':
+        if direction == 'forward':
             index += 2
-        elif direction_face == 'right':
+        elif direction == 'right':
             index += 1
-        elif direction_face == 'back':
+        elif direction == 'back':
             index += 3
     elif command == 'left':
-        if direction_face == 'forward':
+        if direction == 'forward':
             index += 3
-        elif direction_face == 'left':
+        elif direction == 'left':
             index += 1 
-        elif direction_face == 'back':
+        elif direction == 'back':
             index += 2
-    
     return coordinates[index]
 
 
-def get_coordinates(command, position, direction_faces):
+def get_coordinates(command, position, steps):
     '''   F
           |
     L ----|---- R
           | 
           B
     '''
-    index = 0 if (direction_faces == 'right' or direction_faces == 'left') else index = 1
-    if command = 'forward':
-        position[index] += 1
+    if (direction == 'right' or direction == 'left'):
+        index = 0
     else:
-        position[index] -= 1
-    set_direction_face(direction_faces, command)
+        index = 1
+    if command == 'forward' and direction != 'back':
+        position[index] += int(steps)
+    elif command == 'back' or (command == 'forward' and direction == 'back'):
+        position[index] -= int(steps)
+        
     return position
 
 
 def move_robot_forward(name, steps, position):
     """Moves robot forwards"""
     
-    position[1] = position[1] + int(steps)
+    position = get_coordinates('forward', position, steps)
     print(' > ' + str(name) + ' moved forward by ' + str(steps) + ' steps.')
     print(' > ' + str(name) + ' now at position ' + '(' + str(position[0]) + ',' + str(position[1]) + ')' +'.')
 
@@ -132,7 +137,7 @@ def move_robot_forward(name, steps, position):
 def move_robot_backwards(name, steps, position):
     """Moves robot backwards"""
     
-    position[1] = position[1] - int(steps)
+    position = get_coordinates('back', position, steps)
     print(' > ' + str(name) + ' moved back by ' + str(steps) + ' steps.')
     print(' > ' + str(name) + ' now at position ' + '(' + str(position[0]) + ',' + str(position[1]) + ')' +'.')
 
@@ -140,6 +145,7 @@ def move_robot_backwards(name, steps, position):
 def move_robot_right(name, position):
     """Moves robot right"""
     
+    position = get_coordinates('right', position, 'no_steps')
     print(' > '+ str(name) +' turned right.')
     print(' > ' + str(name) + ' now at position ' + '(' + str(position[0]) + ',' + str(position[1]) + ')' +'.')
 
@@ -147,6 +153,7 @@ def move_robot_right(name, position):
 def move_robot_left(name, position):
     """Moves robot left"""
     
+    position = get_coordinates('left', position, 'no_steps')
     print(' > '+ str(name) +' turned left.')
     print(' > ' + str(name) + ' now at position ' + '(' + str(position[0]) + ',' + str(position[1]) + ')' +'.')
 
@@ -168,8 +175,9 @@ def choose_command(command, list_commands):
     return ('not_option', 'no_steps')
 
 
-def do_command(tuple_command, list_commands, list_explanations, name, position):
-    """Executes user's command"""
+def do_command(tuple_command, list_commands, list_explanations, name, position, direction_faces):
+    """Executes user's command; returns whether robot should turn off"""
+    global direction
     
     if  tuple_command[0] == 'off':
         turn_off_robot()
@@ -184,6 +192,9 @@ def do_command(tuple_command, list_commands, list_explanations, name, position):
         move_robot_right(name, position)
     elif tuple_command[0] == 'left':
         move_robot_left(name, position)
+        
+    direction = set_direction_face(tuple_command[0])
+    print(direction)
     return False
 
 
@@ -204,7 +215,7 @@ def robot_start():
             print('\'' + command + '\'.')
             command = input('What must I do next? ')
         tuple_command = choose_command(command, list_commands)
-        off = do_command(tuple_command, list_commands, list_explanations, name, position)
+        off = do_command(tuple_command, list_commands, list_explanations, name, position, direction)
 
 
 if __name__ == "__main__":
