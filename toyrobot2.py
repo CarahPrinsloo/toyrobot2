@@ -96,16 +96,39 @@ def get_coordinates(command, position, steps, direction):
     return position
 
 
+def in_limit(position):
+    """if new position not in limit, returns previous position"""
+    x_axis = position[0]
+    y_axis = position[1]
+    
+    if (x_axis > 100) or (x_axis < -100):
+        return False
+    if (y_axis > 200) or (y_axis < -200):
+        return False
+    return True
+
+
+def print_not_in_limit(position, name):
+    print(str(name) + ': Sorry, I cannot go outside my safe zone.')
+    print(print(' > ' + str(name) + ' now at position ' + '(' + str(position[0]) + ',' + str(position[1]) + ')' +'.'))
+
+
 def move_robot_forward(steps, robot_info):
     """Moves robot forwards"""
-    
+    print('position : ' + str(robot_info[1]))
     name = robot_info[0]
     position = robot_info[1]
     direction = robot_info[2]
     
-    position = get_coordinates('forward', position, steps, direction)
-    print(' > ' + str(name) + ' moved forward by ' + str(steps) + ' steps.')
-    print(' > ' + str(name) + ' now at position ' + '(' + str(position[0]) + ',' + str(position[1]) + ')' +'.')
+    temp_position = get_coordinates('forward', position, steps, direction)
+    print('position : ' + str(robot_info[1]))
+    if (in_limit(temp_position)):
+        print(' > ' + str(name) + ' moved forward by ' + str(steps) + ' steps.')
+        print(' > ' + str(name) + ' now at position ' + '(' + str(position[0]) + ',' + str(position[1]) + ')' +'.')
+        robot_info = (name, temp_position, direction)
+    else:
+        print_not_in_limit(position, name)
+        robot_info = (name, position, direction)
 
 
 def move_robot_backwards(steps, robot_info):
@@ -113,11 +136,17 @@ def move_robot_backwards(steps, robot_info):
     
     name = robot_info[0]
     position = robot_info[1]
+    temp_position = position
     direction = robot_info[2]
     
     position = get_coordinates('back', position, steps, direction)
-    print(' > ' + str(name) + ' moved back by ' + str(steps) + ' steps.')
-    print(' > ' + str(name) + ' now at position ' + '(' + str(position[0]) + ',' + str(position[1]) + ')' +'.')
+    if (in_limit(position)):
+        print(' > ' + str(name) + ' moved back by ' + str(steps) + ' steps.')
+        print(' > ' + str(name) + ' now at position ' + '(' + str(position[0]) + ',' + str(position[1]) + ')' +'.')
+        robot_info = (name, position, direction)
+    else:
+        print_not_in_limit(temp_position, name)
+        robot_info = (name, temp_position, direction)
 
 
 def move_robot_right(robot_info):
@@ -125,11 +154,17 @@ def move_robot_right(robot_info):
     
     name = robot_info[0]
     position = robot_info[1]
+    temp_position = position
     direction = robot_info[2]
     
     position = get_coordinates('right', position, 'no_steps', direction)
-    print(' > '+ str(name) +' turned right.')
-    print(' > ' + str(name) + ' now at position ' + '(' + str(position[0]) + ',' + str(position[1]) + ')' +'.')
+    if (in_limit(position)):
+        print(' > '+ str(name) +' turned right.')
+        print(' > ' + str(name) + ' now at position ' + '(' + str(position[0]) + ',' + str(position[1]) + ')' +'.')
+        robot_info = (name, position, direction)
+    else:
+        print_not_in_limit(temp_position, name)
+        robot_info = (name, temp_position, direction)  
 
 
 def move_robot_left(robot_info):
@@ -137,11 +172,17 @@ def move_robot_left(robot_info):
     
     name = robot_info[0]
     position = robot_info[1]
+    temp_position = position
     direction = robot_info[2]
     
     position = get_coordinates('left', position, 'no_steps', direction)
-    print(' > '+ str(name) +' turned left.')
-    print(' > ' + str(name) + ' now at position ' + '(' + str(position[0]) + ',' + str(position[1]) + ')' +'.')
+    if (in_limit(position)):
+        print(' > '+ str(name) +' turned left.')
+        print(' > ' + str(name) + ' now at position ' + '(' + str(position[0]) + ',' + str(position[1]) + ')' +'.')
+        robot_info = (name, position, direction)
+    else:
+        print_not_in_limit(temp_position, name)
+        robot_info = (name, temp_position, direction) 
 
 
 def get_steps(command):
@@ -184,9 +225,8 @@ def turn_command_into_tuple(command):
 def choose_command(command, list_commands):
     """Returns tuple with command and amount of steps; ONLY if it's a valid move"""
     
-    user_input = tuple_command_and_steps[0]
-    
     tuple_command_and_steps = turn_command_into_tuple(command.lower().strip())
+    user_input = tuple_command_and_steps[0]
     for item in list_commands:
         if item.lower() == user_input:
             return tuple_command_and_steps
