@@ -18,18 +18,19 @@ def print_list_commands(list_commands, list_explanation):
     
     i = 0
     print('I can understand these commands:')
-    for command in list_commands:
+    for index in range(2):
         space = 0
-        print(command, end = '')
-        while space < 6 - (len(command)-1):
-            if space == 4 - (len(command)-1):
+        print(list_commands[index], end = '')
+        while space < 6 - (len(list_commands[index])-1):
+            if space == 4 - (len(list_commands[index])-1):
                 print('-', end = '')
             else:
                 print(' ', end = '')
             space += 1
         print(list_explanation[i])
         i += 1
-    print()
+    for index in range(2, len(list_commands)):
+        print(str(list_commands[index]) + ' - ' + str(list_explanation[index]))
 
 
 def list_commands_output(list_commands, list_explanation):
@@ -37,11 +38,11 @@ def list_commands_output(list_commands, list_explanation):
     
     output = 'I can understand these commands:\n'
     i = 0
-    for command in list_commands:
+    for index in range(2):
         space = 0
-        output = output + str(command)
-        while space < 6 - (len(command)-1):
-            if space == 4 - (len(command)-1):
+        output = output + str(list_commands[index])
+        while space < 6 - (len(list_commands[index])-1):
+            if space == 4 - (len(list_commands[index])-1):
                 output = output + '-'
             else:
                 output = output + ' '
@@ -49,6 +50,8 @@ def list_commands_output(list_commands, list_explanation):
         output = output + list_explanation[i] + '\n'
         i += 1
     output = output + '\n'
+    for index in range(2, len(list_commands)):
+        output = output + list_commands[index] + ' ' + list_explanation[index] + '\n'
     return output
 
 
@@ -242,7 +245,7 @@ def robot_start():
     direction = 'forward'
     robot_info = (name, position, direction)
     list_commands = ['OFF', 'HELP', 'FORWARD', 'BACK', 'RIGHT', 'LEFT', 'SPRINT']
-    list_explanations = ['Shut down robot', 'provide information about commands', 'move robot forward', 'move robot backwards', 'turns robot right', 'turns robot left', 'gives it a short burst of speed and some extra distance']
+    list_explanations = ['Shut down robot', 'provide information about commands', 'move robot forward', 'move robot backwards', 'turns robot right', 'turns robot left', 'gives the robot a short burst of speed and distance']
 
     while not off:
         print(name + ': ', end = '')
