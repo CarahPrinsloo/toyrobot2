@@ -16,42 +16,37 @@ def turn_off_robot():
 def print_list_commands(list_commands, list_explanation):
     """Print list of commands"""
     
-    i = 0
-    print('I can understand these commands:')
-    for index in range(2):
-        space = 0
-        print(list_commands[index], end = '')
-        while space < 6 - (len(list_commands[index])-1):
-            if space == 4 - (len(list_commands[index])-1):
+    for i in range(2):
+        command = list_commands[i]
+        spaces = 7 - len(command)
+        print(' ', end ='')
+        print(command, end ='')
+        for j in range(spaces):
+            if j == (4 - (len(command) - 1)):
                 print('-', end = '')
             else:
                 print(' ', end = '')
-            space += 1
         print(list_explanation[i])
-        i += 1
-    for index in range(2, len(list_commands)):
-        print(str(list_commands[index]) + ' - ' + str(list_explanation[index]))
+    for k in range(2, len(list_commands)):
+        print(' ' + str(list_commands[k]) + ' - ' + str(list_explanation[k]))
 
 
 def list_commands_output(list_commands, list_explanation):
     """Returns string of the output that will print when user enters help command"""
     
-    output = 'I can understand these commands:\n'
-    i = 0
-    for index in range(2):
-        space = 0
-        output = output + str(list_commands[index])
-        while space < 6 - (len(list_commands[index])-1):
-            if space == 4 - (len(list_commands[index])-1):
+    output = ''
+    for i in range(2):
+        command = list_commands[i]
+        spaces = 7 - len(command)
+        output = output + ' ' + str(command)
+        for j in range(spaces):
+            if j == (4 - (len(command) - 1)):
                 output = output + '-'
             else:
                 output = output + ' '
-            space += 1
-        output = output + list_explanation[i] + '\n'
-        i += 1
-    output = output + '\n'
-    for index in range(2, len(list_commands)):
-        output = output + list_commands[index] + ' ' + list_explanation[index] + '\n'
+        output = output + str(list_explanation[i]) + '\n'
+    for k in range(2, len(list_commands)):
+        output = output + ' ' + str(list_commands[k]) + ' - ' + str(list_explanation[k])
     return output
 
 
