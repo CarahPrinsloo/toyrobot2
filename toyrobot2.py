@@ -218,7 +218,18 @@ def get_move(command):
             if digits == 0:
                 move = move + command[i]
     return move.lower().strip()
+
+
+def check_valid_input(command, steps):
+    """Check if (valid) command has correct step input"""
     
+    command_and_steps = (command, steps)
+    if (command == 'back' or command == 'forward' or command == 'sprint') and steps == 'no_steps':
+        command_and_steps = ('not_option', 'no_steps')
+    elif (command == 'right' or command == 'left') and steps != 'no_steps':
+        command_and_steps = ('not_option', 'no_steps')
+    return command_and_steps
+   
 
 def choose_command(command, list_commands):
     """Returns tuple with command and # of steps; ONLY if it's a valid move"""
@@ -226,7 +237,7 @@ def choose_command(command, list_commands):
     command_input = get_move(command.lower().strip())
     for item in list_commands:
         if item.lower() == command_input:
-            command_and_steps = (command_input, get_steps(command.lower().strip()))
+            command_and_steps = check_valid_input(command_input, get_steps(command.lower().strip()))
             return command_and_steps
     return ('not_option', 'no_steps')
 
