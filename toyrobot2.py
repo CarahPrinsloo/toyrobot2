@@ -8,9 +8,10 @@ def name_robot():
     return name
 
 
-def turn_off_robot():
+def turn_off_robot(name):
     """Turn off robot"""
-    print('Shutting down..')
+
+    print(str(name)+': Shutting down..')
 
 
 def print_list_commands(list_commands, list_explanation):
@@ -20,7 +21,6 @@ def print_list_commands(list_commands, list_explanation):
     for i in range(2):
         command = list_commands[i]
         spaces = 7 - len(command)
-        print(' ', end ='')
         print(command, end ='')
         for j in range(spaces):
             if j == (4 - (len(command) - 1)):
@@ -40,7 +40,7 @@ def list_commands_output(list_commands, list_explanation):
     for i in range(2):
         command = list_commands[i]
         spaces = 7 - len(command)
-        output = output + ' ' + str(command)
+        output = output + str(command)
         for j in range(spaces):
             if j == (4 - (len(command) - 1)):
                 output = output + '-'
@@ -48,7 +48,7 @@ def list_commands_output(list_commands, list_explanation):
                 output = output + ' '
         output = output + str(list_explanation[i]) + '\n'
     for k in range(2, len(list_commands)):
-        output = output + ' ' + str(list_commands[k]) + ' - ' + str(list_explanation[k])
+        output = output + str(list_commands[k]) + ' - ' + str(list_explanation[k])+'\n'
     output = output + '\n'
     return output
 
@@ -99,7 +99,6 @@ def set_direction_face(command, direction):
 
 def get_coordinates(command, position, steps, direction):
     """Modify coordinates for when robot moves"""
-
     #choose axis that is changed by move
     if (direction == 'right' or direction == 'left'):
         index = 0
@@ -111,8 +110,10 @@ def get_coordinates(command, position, steps, direction):
     #add/subtract steps from axis
     if command == 'forward' and (direction != 'back' and direction != 'left'):
         axis += int(steps)
-    elif command == 'back' or (command == 'forward' and (direction == 'back' or direction == 'left')):
+    elif (command == 'back' and direction != 'left') or (command == 'forward' and (direction == 'back' or direction == 'left')):
         axis -= int(steps)
+    elif command == 'back' and direction == 'left':
+        axis += int(steps)
     
     #check if change is valid
     if in_limit(axis, index):
@@ -127,14 +128,14 @@ def print_sprint_move(is_valid, name, position, steps):
     if (is_valid):
         for i in range(0, int(steps)):
             print_steps = int(steps) - i
-            print('  > '+ str(name) +' moved forward by '+ str(print_steps) +' steps.')
+            print(' > '+ str(name) +' moved forward by '+ str(print_steps) +' steps.')
     
 
 def calculate_sprint_taken_steps(steps, name):
     """Calculate # steps taken by robot when sprint move is performed"""
     
     if (steps != 0):
-        return steps + calculate_sprint_taken_steps(steps - 1, name);
+        return steps + calculate_sprint_taken_steps(steps - 1, name)
     else:
         return steps
 
@@ -164,7 +165,7 @@ def move_robot(command, steps, robot_info):
     prev_position = position
     position = get_coordinates(command, position, steps, direction)
     #invalid move
-    if (position == prev_position) and (command != 'left') and (command != 'right'):
+    if (position == prev_position) and (command != 'left') and (command != 'right') and (int(steps) != 0):
         print(str(name) + ': Sorry, I cannot go outside my safe zone.')
         robot_info = (name, position, direction) 
     #valid move
@@ -260,7 +261,6 @@ def do_command(tuple_command_and_steps, list_commands, list_explanations, robot_
 def robot_start():
     """This is the entry function, do not change"""
     
-    off = False
     position = (0,0)
     name = name_robot()
     direction = 'forward'
@@ -272,10 +272,10 @@ def robot_start():
         print(name + ': ', end = '')
         command = input('What must I do next? ')
         while choose_command(command, list_commands)[0] == 'not_option':
-            print('Sorry, I did not understand '+'\'' + str(command) + '\'.')
-            command = input('What must I do next? ')
+            print(str(name) + ': Sorry, I did not understand '+'\'' + str(command) + '\'.')
+            command = input(str(name)+': What must I do next? ')
         if  command.lower().strip() == 'off':
-            turn_off_robot()
+            turn_off_robot(name)
             break
         command_and_steps = choose_command(command, list_commands)
         robot_info = do_command(command_and_steps, list_commands, list_explanations, robot_info)
